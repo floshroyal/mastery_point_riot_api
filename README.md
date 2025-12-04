@@ -1,40 +1,74 @@
-League of Legends: Champion Mastery's Effect on Bronze ELO Win Rate
+# League of Legends: Champion Mastery’s Effect on Bronze ELO Win Rate
 
-Project Summary
+## Project Summary
 
-Analysis of the effect of **Champion Mastery Points** on **match victory** for players in the **Bronze IV league** using the Riot Games API and **Logistic Regression**. The study was designed to test if specialized champion knowledge directly impacts a player's ability to carry a low-ranking game.
-The analysis concluded that champion mastery points had **no statistically significant effect** on the match outcome, leading to the **rejection of the initial hypothesis**.
+This project analyzes the effect of champion mastery points on match victory for players in the Bronze IV league using the Riot Games API and Logistic Regression. The study was designed to test whether specialized champion knowledge meaningfully influences a player's ability to win low-ranking games. The analysis concluded that champion mastery points have no statistically significant effect on match outcomes, leading to the rejection of the initial hypothesis.
 
-Hypothesis & Goal
+---
 
-**Hypothesis:** Higher champion mastery points (a proxy for player experience on a specific champion) will lead to a higher win probability in low-elo tier.
-**Goal:** Build a robust data pipeline and a statistical model to quantify the relationship between the in-game difference in team mastery points and the final match outcome (Win/Loss).
+## Hypothesis & Goal
 
-Methodology & Data Engineering
+**Hypothesis:**  
+Higher champion mastery points (a proxy for player experience on a specific champion) will lead to a higher probability of winning in low-ELO games.
 
-This project involved data acquisition from the Riot Games API, error handling, and data enrichment. 
-1.  **Data Acquisition:** Player PUUIDs were collected from the **League-Exp-v4** endpoint for Bronze IV.
-2.  **Match Data Collection:** **1000 sample solo-queue ranked matches** were retrieved using the **Match-V5** endpoint.
-3.  **Data Enrichment:** The **Champion-Mastery-v4** endpoint was used to pull the specific mastery score for the champion each player used in the match.
-4.  **Persistence:** All raw and final data were saved to JSON/CSV files
-   
-Data Cleaning
+**Goal:**  
+To build a robust data pipeline and statistical model that quantifies the relationship between the team-wide difference in mastery points and the final match outcome (Win/Loss).
 
-To ensure the model only trained on valid and competitive data, the following custom filtering rules were implemented:
-* **Remake/Early Surrender Filter:** Matches with a duration of less than 8 minutes (480 seconds) were excluded.
-* **AFK Player Filter:** Matches containing any player who met low-effort criteria (e.g., played less than 60% of game duration, or ultra-low combined K/D/A, Gold, and Damage in long games) were removed.
-* **Smurf Detection Filter:** Matches containing players who showed abnormally high performance metrics for the Bronze ELO were removed (e.g., **9.0+ CS/min or 20+ kills with 2 or less deaths**).
+---
 
-Modeling & Conclusion
+## Methodology & Data Engineering
 
-Model Used: Logistic Regression
+This project involved data acquisition from the Riot Games API, error handling, data cleaning, and data enrichment.
 
-The clean dataset was used to predict the Win outcome based on the feature Mastery_Diff (the difference in average mastery points between the winning and losing teams).
-Model Accuracy: 54.10% 
-Mastery Coefficient 1.7083291544221246e-07 which is effectively zero.
+**Data Acquisition:**  
+Player PUUIDs were collected from the League-Exp-v4 endpoint for Bronze IV accounts.
 
+**Match Data Collection:**  
+A dataset of 1000 ranked solo queue matches was retrieved using the Match-V5 endpoint.
 
-Final Conclusion
+**Data Enrichment:**  
+The Champion-Mastery-v4 endpoint provided the mastery score for the specific champion each player used in the match.
 
-The Logistic Regression Coefficient was found  is statistically zero. This led to the rejection of the hypothesis.
-The analysis definitively demonstrates that in the Bronze IV tier, the outcome of a match is likely determined by factors with greater variance, such as **real-time execution errors, poor objective control, or team coordination**, rather than a player's accumulated champion experience.
+**Persistence:**  
+All raw and processed data were saved to JSON and CSV files to maintain reproducibility and avoid re-fetching data under API rate limits.
+
+---
+
+## Data Cleaning
+
+To ensure the Logistic Regression model was trained on valid and competitive data, the following filtering rules were implemented:
+
+**Remake / Early Surrender Filter:**  
+Matches with a duration of less than 8 minutes (480 seconds) were excluded.
+
+**AFK Player Filter:**  
+Matches were removed if any player demonstrated low-effort or AFK-like behavior, such as extremely low activity, near-zero combat participation, or unreliable performance metrics.
+
+**Smurf Detection Filter:**  
+Matches containing players with abnormally high performance for Bronze ELO (e.g., 9.0+ CS/min, or 20+ kills with only 2 or fewer deaths) were excluded.
+
+These filtering steps ensured that only competitive and representative Bronze IV games remained in the dataset.
+
+---
+
+## Modeling & Conclusion
+
+**Model Used:** Logistic Regression
+
+The cleaned dataset was used to predict the match outcome (`Win`) using **Mastery_Diff**, defined as the difference in average team mastery points between the winning and losing teams.
+
+- **Model Accuracy:** 54.10%  
+- **Mastery Coefficient:** 1.7083291544221246e-07 (effectively zero)
+
+**Interpretation:**  
+The logistic regression coefficient is statistically indistinguishable from zero, meaning differences in champion mastery have no measurable impact on the probability of winning a Bronze IV match.
+
+---
+
+## Final Conclusion
+
+The analysis demonstrates that champion mastery points do not meaningfully influence match outcomes in the Bronze IV tier.  
+Instead, match results in this tier are more strongly affected by high-variance factors such as real-time execution errors, poor objective control, team coordination issues, and inconsistent mechanical performance, rather than accumulated champion experience.
+
+Therefore, the initial hypothesis was rejected.
+
